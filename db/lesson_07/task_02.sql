@@ -1,4 +1,8 @@
-DROP DATABASE IF EXISTS lesson_07;
+-- Урок 7. Тема “Сложные запросы”
+-- Задание 2.
+-- Выведите список товаров products и разделов catalogs, который соответствует товару.
+
+-- Создадим базу для выполнения задания, взяв схему из примера урока shop.sqlDROP DATABASE IF EXISTS lesson_07;
 CREATE DATABASE lesson_07;
 USE lesson_07;
 
@@ -118,10 +122,10 @@ CREATE TABLE storehouses_products (
 ) COMMENT = 'Запасы на складе';
 
 
+-- Делаем выборку товаров с соответствующим каталогом
 SELECT 
 	p.name product_name, c.name catalog_name 
 FROM 
 	products p JOIN catalogs c 
 ON c.id = p.catalog_id;
-
 
