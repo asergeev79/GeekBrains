@@ -1,3 +1,12 @@
+-- Урок 7. Тема “Сложные запросы”
+-- Задание 3.
+-- Пусть имеется таблица рейсов flights (id, from, to) и таблица городов cities (label, name). 
+-- Поля from, to и label содержат английские названия городов, поле name — русское. 
+-- Выведите список рейсов flights с русскими названиями городов.
+
+
+-- Создадим базу для выполнения задания, взяв схему из задания
+
 DROP DATABASE IF EXISTS lesson_07;
 CREATE DATABASE lesson_07;
 USE lesson_07;
@@ -38,11 +47,16 @@ VALUES
 SELECT * FROM cities;
 
 
+-- Делаем выборку, используя JOIN 3-х таблиц (так как перевести надо 2 столбца)
 SELECT 
 	f.id,c1.name from_ru,c2.name to_ru 
 FROM 
-	cities c1, cities c2, flights f
-WHERE 
+	cities c1
+	JOIN
+	cities c2
+	JOIN
+	flights f
+ON 
 	c1.label LIKE f.city_from 
 	AND 
 	c2.label LIKE f.city_to
