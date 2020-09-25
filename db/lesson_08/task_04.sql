@@ -1,4 +1,4 @@
--- Урок 6.
+-- Урок 8.
 -- Практическое задание по теме “Операторы, фильтрация, сортировка и ограничение.
 -- Агрегация данных
 -- Работаем с БД vk и тестовыми данными, которые вы сгенерировали ранее:
@@ -8,35 +8,69 @@
 
 USE vk;
 
-DESC likes;
+-- Используем вложенный SELECT
+-- Выбираем пользователей, кому поставили лайк
+SELECT target_id FROM likes WHERE target_type_id = (SELECT id FROM target_types WHERE name LIKE 'users');
 
--- Выбираем 10 самых молодых пользователей
-SELECT user_id FROM profiles ORDER BY birthday DESC LIMIT 10;
+-- Выбираем дни рождения пользователей, кому поставили лайк
+SELECT 
+	(SELECT birthday FROM profiles WHERE user_id = l.target_id) AS birthday
+FROM 
+	(SELECT * FROM likes WHERE target_type_id = (SELECT id FROM target_types WHERE name LIKE 'users')) AS l;
 
+-- Группируем по дням рождения, считаем кол-во лайков каждому пользователя, сортируем и выбираем 10 самых молодых
+SELECT 
+	(SELECT birthday FROM profiles WHERE user_id = l.target_id) AS birthday,
+	COUNT(*) AS likes
+FROM 
+	(SELECT * FROM likes WHERE target_type_id = (SELECT id FROM target_types WHERE name LIKE 'users')) AS l
+GROUP BY
+	birthday
+ORDER BY 
+	birthday DESC
+LIMIT 10;
+
+-- Считаем общее кол-во лайков 10 самым молодым пользователям
+SELECT SUM(likes_10.likes) AS sum_10
+FROM 
+	(SELECT 
+		(SELECT birthday FROM profiles WHERE user_id = l.target_id) AS birthday,
+		COUNT(*) AS likes
+	FROM 
+		(SELECT * FROM likes WHERE target_type_id = (SELECT id FROM target_types WHERE name LIKE 'users')) AS l
+	GROUP BY
+		birthday
+	ORDER BY 
+		birthday DESC
+	LIMIT 10) AS likes_10;
+
+
+-- Используем JOIN
 -- Выбираем лайки, поставленные пользователям
-SELECT * FROM target_types tt WHERE name LIKE 'users';
-SELECT target_id FROM likes l WHERE target_type_id = 2;
 SELECT 	l.target_id FROM likes l, target_types tt WHERE l.target_type_id = tt.id AND tt.name LIKE 'users';
 
 -- Посчитаем кол-во лайков 10 самым молодым пользователям
-SELECT COUNT(*) FROM 
+SELECT 
+	SUM(likes_10.likes) AS sum_10
+FROM 
 	(SELECT 
-		p.user_id 
+		p.birthday,
+		COUNT(*) AS likes
 	FROM 
-		profiles p 
-	ORDER BY 
-		p.birthday DESC 
-	LIMIT 10) AS young_user
-JOIN
-	(SELECT 
-		l.target_id 
-	FROM 
-		likes l
+		likes l 
 		JOIN
 		target_types tt 
-	ON 
-		l.target_type_id = tt.id 
-		AND 
-		tt.name LIKE 'users') AS likes_user
-ON 
-	young_user.user_id = likes_user.target_id;
+		JOIN 
+		profiles p 
+		ON
+			l.target_type_id = tt.id 
+			AND 
+			tt.name LIKE 'users'
+			AND 
+			l.target_id = p.user_id
+		GROUP BY 
+			p.birthday
+		ORDER BY 
+			p.birthday DESC 
+		LIMIT 10) AS likes_10;
+
