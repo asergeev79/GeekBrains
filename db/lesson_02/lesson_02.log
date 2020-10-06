@@ -1,0 +1,57 @@
+Executing task 1:
+Creating '~/.my.cnf' file...
+-rw------- 1 ubuntu ubuntu 38 Sep 4 00:33 /home/ubuntu/.my.cnf
+/home/ubuntu/.my.cnf:
+[client]
+user=root
+password=12345678
+
+Executing task 2:
+Running SQL script 'mysql < task_02.sql'
+task_02.sql:
+drop database if exists example;
+create database example;
+
+use example;
+
+drop table if exists users;
+create table users (
+	id serial primary key,
+	name varchar(255)
+	);
+
+show tables;
+describe users;
+select * from users;
+
+
+Tables_in_example
+users
+Field	Type	Null	Key	Default	Extra
+id	bigint unsigned	NO	PRI	NULL	auto_increment
+name	varchar(255)	YES		NULL	
+
+Executing task 3:
+Dumping database 'example': mysqldump example > dump_example.sql
+Running SQL script 'mysql < task_03.sql'
+task_03.sql:
+drop database if exists sample;
+create database sample;
+
+use sample;
+
+show tables;
+
+
+Undumping database 'example' to database 'sample': mysql sample < dump_example.sql
+Show tables of 'sample':
+Field	Type	Null	Key	Default	Extra
+id	bigint unsigned	NO	PRI	NULL	auto_increment
+name	varchar(255)	YES		NULL	
+Tables_in_sample
+users
+
+Executing task 4:
+Dumping first 100 rows from table 'help_keyword' of database 'mysql': 
+mysqldump --opt --where='1 limit 100' --no-create-info mysql help_keyword > dump_mysql_hk_100rows.sql
+

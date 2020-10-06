@@ -1,0 +1,48 @@
+-- Практическое задание по теме “NoSQL”
+-- 3. Организуйте хранение категорий и товарных позиций учебной базы данных shop в СУБД MongoDB.
+
+-- Можно сделдать в составе одной коллекции shop
+-- либо разделить на разные коллекции
+-- db.products.insert() и db.catalogs.insert()
+use shop
+db.shop.insert({
+		"type": "products",
+		"name": "Intel Core i3-8100", 
+		"description": "Процессор для настольных персональных компьютеров, основанных на платформе Intel", 
+		"price": "7890.00", 
+		"catalog_id": "Процессоры", 
+		"created_at": new Date(), 
+		"updated_at": new Date()
+		}) 
+db.shop.insert({
+		"type": "products",
+		"name": "Intel Core i5-7400", 
+		"description": "Процессор для настольных персональных компьютеров, основанных на платформе Intel", 
+		"price": "12700.00", 
+		"catalog_id": "Процессоры", 
+		"created_at": new Date(), 
+		"updated_at": new Date()
+		}) 
+db.shop.insert({
+		"type": "products",
+		"name": "ASUS ROG MAXIMUS X HERO", 
+		"description": "Материнская плата ASUS ROG MAXIMUS X HERO, Z370, Socket 1151-V2, DDR4, ATX", 
+		"price": "19310.00", 
+		"catalog_id": "Материнские платы", 
+		"created_at": new Date(), 
+		"updated_at": new Date()
+		}) 
+
+db.shop.count()
+db.shop.find()
+
+db.shop.insertMany([
+	{"type": "catalogs", "name": "Процессоры"}, 
+	{"type": "catalogs", "name": "Материнские платы"}, 
+	{"type": "catalogs", "name": "Видеокарты"},
+	{"type": "catalogs", "name": "Жесткие диски"},
+	{"type": "catalogs", "name": "Оперативная память"}
+])
+
+db.shop.count()
+db.shop.find()
